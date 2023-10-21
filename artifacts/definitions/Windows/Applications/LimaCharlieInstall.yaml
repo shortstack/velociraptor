@@ -1,0 +1,26 @@
+name: Windows.Applications.LimaCharlieInstall
+author: Whitney Champion (@shortxstack)
+description: |
+  This artifact installs the LimaCharlie EDR sensor.
+
+tools:
+  - name: LimaCharlieBinary
+    url: https://downloads.limacharlie.io/sensor/windows/64
+    serve_locally: true
+
+precondition: SELECT OS From info() where OS = 'windows'
+
+required_permissions:
+- EXECVE
+
+parameters:
+  - name: InstallationKey
+    default: 
+
+sources:
+  - query: |
+      LET bin <= SELECT * FROM Artifact.Generic.Utils.FetchBinary(
+           ToolName="LimaCharlieBinary")
+    
+      SELECT * FROM execve(argv=[bin[0].FullPath, "-i", InstallationKey])
+        
